@@ -9,7 +9,7 @@ function click_blank(e) {
     if(e.originalEvent.clientX == 0)    return;     // 键盘回车触发的，阻止！
     var active_dl = $(".lw_droplist:visible");
     active_dl.prev().find("span").html('▽');
-    active_dl.hide();  // console.log('hide bbblank...', e.originalEvent.clientX);
+    active_dl.hide();
 
     $(document).unbind("click", click_blank);       //取消bind的click事件回调函数
 }
@@ -24,16 +24,12 @@ $.fn.DIVal = function(s_val) { // 仅设置和读取文本，和下拉列表无�
 
 var g_lh = 24.6;      // 用于控制滚动条的行高
 
-//function testa(a, b) {
-//    console.log(typeof(a), typeof(b));
-//    console.log(typeof(a.opt),typeof(a.length), typeof(a.opt.length), typeof(a.iid), typeof(b.iid));
-//}
 /* 自定义：$("#dp").setDropdown(
             // opts: [{k1:v1, k2:v2, ..}, ..]
             // callback：回调函数 on_sel(id){...}，参数为选中行id
-            // editable: true(input) | false(div)；缺省false
+            // editable: true(可编辑，可筛选) | false；缺省false
             // iid: 初始显示第几行，缺省0
-            // col: 显示每行第几列？或者是一个函数，缺省第0列
+            // col: 显示每行第几列？或者是一个函数；缺省第0列
             // cmp：如果是input，定义筛选时内容匹配方法，缺省为整行所有字符串拼接后包含
         // );  */
 $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
@@ -67,9 +63,9 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
     opts.map((u,i)=>{
         var tr = $("<tr></tr>");
         for (k in u) {
-            tr.append(`<td title="${k}">${u[k]}</td>`);
-            tr.data("lid", i);              // <tr data-lid=${自身行号}> ... </tr>
+            tr.append(`<td title="${k}">${u[k]}</td>`);    // 鼠标悬浮显示该列Key值                 
         }
+        tr.data("lid", i);             // <tr data-lid=${自身行号}> ... </tr>
         dp.find("table").append(tr);                   // 填充droplist表格内容
     });
     var di = $(this).find(".lw_dropitem");      // 当前控件的<droptiem>
@@ -131,7 +127,7 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
         di.find("input").prop("value", s_val);  // 显示。。。input
         di.find("input").select();              // 设置文本选中状态！
 
-        dl.hide();  // console.log('hide111');
+        dl.hide();
         di.find("span").html('▽');
 
         $(document).unbind("click", click_blank);       //取消bind的click事件回调函数
@@ -193,9 +189,7 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
                 break;
             }
             if(trs.eq(sel_id).is(":visible")) {     // 小心 .eq(-1)取倒数第一个
-                // console.log('class=', trs.eq(sel_id).prop("class"));
                 trs.eq(sel_id).addClass("s");
-                // console.log('class=', trs.eq(sel_id).attr("class"));
                 break;
             }   
         }
