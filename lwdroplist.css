@@ -1,0 +1,49 @@
+.lw_dropdown {
+    position: relative;
+    display: inline-block;
+}
+.lw_dropitem {
+    width: 100%;
+    border: #aaf 1px solid;
+    border-radius: 5px;   /*  圆角 */
+    cursor: pointer;
+}
+.lw_dropitem_inner {      /* 用div来模拟select 必须放深一层*/
+    padding: 2px 5px 2px 10px;
+}
+.lw_dropitem_input {
+	text-align: left;	/* 此两行使得 input type=button和text外观相同 */
+	background-color: #fff;
+    border: none;
+    font-size: 16px;
+    margin: 2px 0 2px 10px;  /* 上下 左右；；上右下左*/
+    width: 85%;
+}
+.lw_dropitem:hover, .lw_dropitem input:hover {/* 非button，input没有focus。。。 , .dropitem:focus {  */
+    background-color: #afa;
+}
+.lw_droplist {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    border: #aaf 1px solid;
+    width: 100%;
+    max-height: 200px;      /* 超过此高度则显示滚动条  */
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+.lw_droplist table {
+    border-collapse: collapse;
+    width: 100%;
+    cursor: pointer;
+}
+.lw_droplist table tr td{
+    border: 1px solid #ccf;
+}
+.lw_droplist tr.s{
+    background: #aaf;
+}
+.lw_droplist tr:hover:not(.s){
+    background: #afa;
+}

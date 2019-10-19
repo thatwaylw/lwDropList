@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>测试 · lwDropList控件</title>
+    <link rel="stylesheet" href="lwdroplist.css">
+    <style>
+        .bdr {border:orange 1px dashed;}
+        .pd {padding: 10px;}
+        .mg {margin: 10px;}
+    </style>
+</head>
+
+<body>
+<h1>测试·lwDropList控件</h1>
+<div class="pd bdr" style="min-height: 50px;">
+    这里有些内容 <br /><br />
+    老师：<div id="drpdn0"></div>　　班级：<div id="drpdn1"></div> 回调实验：<span id="s1"></span>
+</div>
+<div class="mg bdr" style="width:25%; min-height: 300px; float:left;">
+    左边有些内容
+    <div class="pd">
+        如果不用id定义此控件，则内容一样，但是行为各自：<br>
+        <div class="drd"></div><br><br><br><br>
+        <div class="drd"></div><br><br><br><br>
+        <div class="drd"></div>
+    </div>
+</div>
+<div style="float:left;">
+    <div class="bdr">
+        <p>又一块内容</p>
+        学生：<div id="drpdn2"></div>（缺省宽度200，可按需自定义缩短宽度）
+        <br>……
+    </div>
+    <div class="mg pd bdr">
+        <h3>使用方法：</h3>
+        <pre>
+【html】: &lt;div id="drpdn0"&gt;&lt;/div&gt;
+【js】: $("#drpdn0").setDropdown(opt0, 0, false, 0, 1);
+
+【html】: &lt;div id="drpdn1"&gt;&lt;/div&gt;
+【js】: 
+var dp1 = $("#drpdn1");
+dp1.setDropdown({
+    dat: opt1,
+    callback: func_on_sel, 
+    editable: true, 
+    iid: 8, 
+    col: func_col, 
+    cmp: func_cmp
+});
+dp1.setDpWidth("280px", "88%");    <i style="color:gray">// 按需自己微调输入框宽度比例，免得把▽挤到下一行。。</i>
+
+【下拉列表data是json数组】：
+var opt1 = [
+    {id:1, name:'班级1', '人数': 10, addr:'地址1'}, 
+    {id:2, name:'班级2', '人数': 10, addr:'地址2'}, 
+    ...
+];
+        </pre>
+    </div>
+</div>
+
+<div style="clear:left">
+    <ul>
+        <li><a href="https://github.com/thatwaylw">https://github.com/thatwaylw</a></li>
+        <li><a href="mailto:thatwaylw@qq.com">thatwaylw@qq.com</a></li>
+        <li>2019-10-18</li>
+    </ul>
+</div>
+</body>
+
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="lwdroplist.js"></script>
+<script>
+
+    var na1 = '赵钱孙李周吴郑王'; na2='甲乙丙丁戊己庚辛壬癸';
+    var en = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    function randN() {
+        var ret = na1[Math.floor(Math.random()*8)];
+        ret += na2[Math.floor(Math.random()*10)];
+        if(Math.random()>0.5)
+            ret += na2[Math.floor(Math.random()*10)];
+        return ret;
+    }
+    function randC() {
+        var ret = na2[Math.floor(Math.random()*10)];
+        for (let i=0; i<2+Math.floor(Math.random()*2); i++)
+            ret += en[Math.floor(Math.random()*26)];
+        return ret;
+    }
+    var opt0=[], opt1=[], opt2=[];
+    for(let i=1; i<=4; i++)
+        opt0.push({id: 100+i, name: randN(), cell: 1390000+Math.floor(Math.random()*10000)});
+    for(let i=1; i<=40; i++)
+        opt1.push({id: 300+i, name:randC(), '班级人数': 10+Math.floor(Math.random()*26), addr:randC()+Math.floor(Math.random()*100)+'号'});
+    for(let i=1; i<=30; i++)
+        opt2.push({'学生姓名': randN(), '学 号': i});
+
+
+    var func_col = function(iid) {      // 自定义顶端怎么显示选中的行。。。
+        return (`${opt1[iid].id} - ${opt1[iid].name} (${opt1[iid].addr})`);
+    }
+    var func_cmp = function(txt, iid) { // 自定义如何按键入内容筛选每行，<0为内容不匹配，隐藏此行
+        var lin = iid%2==0?'a':'b';
+        lin += (iid+1) + opt1[iid].name.toLowerCase();
+        return (lin.indexOf(txt));
+    }
+    var func_on_sel = function(sid) {   // 自定义选择改变时的回调函数
+        // alert('选中的内容是：' + func_col(sid));
+        $("#s1").html('选中：' + func_col(sid));
+    }
+
+    var dp0 = $("#drpdn0");
+    dp0.setDropdown({dat:opt0, col:1});
+
+    var dp1 = $("#drpdn1");
+    dp1.setDropdown({dat:opt1}, func_on_sel, true, 8, func_col, func_cmp);
+    dp1.setDpWidth("280px", "88%");       // 自己微调输入框宽度比例，免得把▽挤到下一行。。
+
+    $("#drpdn2").setDropdown({dat:opt2, editable:true});
+    $("#drpdn2").setDpWidth("80px", "80px");
+    $("#drpdn2").setDpHeight("300px");
+
+    $("div.drd").setDropdown(opt0);         // 设置三个同class控件，内容相同，但是行为各自
+
+</script>
+
+</html>
