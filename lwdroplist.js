@@ -76,6 +76,8 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
 
     var s_val = getShowVal(dl.find("tr").eq(iid), iid);
     di.find("input").prop("value", s_val);  // 。。。input，text或button
+    dl.find("tr").eq(iid).addClass("s");    // 设定好初始高亮行
+    dl.scrollTop(iid * g_lh - 100);         // 如果有滚动条，保证初始高亮行可见
 // ~ ~ ~ ~ ~ ~ ~ ~ - - - - - - - - ~ ~ ~ ~ ~ ~ ~ ~ - - - - - - - -
     function getShowVal(tr, s_id) {
         if(typeof(col)=="function") {
