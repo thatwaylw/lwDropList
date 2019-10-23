@@ -9,7 +9,7 @@ function click_blank(e) {
     if(e.originalEvent.clientX == 0)    return;     // 键盘回车触发的，阻止！
     var active_dl = $(".lw_droplist:visible");
     active_dl.prev().find("span").html('▽');
-    active_dl.hide();
+    active_dl.hide();  // console.log('hide @ blank...', e.originalEvent.clientX);
 
     $(document).unbind("click", click_blank);       //取消bind的click事件回调函数
 }
@@ -25,11 +25,11 @@ $.fn.DIVal = function(s_val) { // 仅设置和读取文本，和下拉列表无�
 var g_lh = 24.6;      // 用于控制滚动条的行高
 
 /* 自定义：$("#dp").setDropdown(
-            // opts: [{k1:v1, k2:v2, ..}, ..]
+            // opts.dat: [{k1:v1, k2:v2, ..}, ..]
             // callback：回调函数 on_sel(id){...}，参数为选中行id
-            // editable: true(可编辑，可筛选) | false；缺省false
+            // editable: true(input) | false(div)；缺省false
             // iid: 初始显示第几行，缺省0
-            // col: 显示每行第几列？或者是一个函数；缺省第0列
+            // col: 显示每行第几列？或者是一个函数，缺省第0列
             // cmp：如果是input，定义筛选时内容匹配方法，缺省为整行所有字符串拼接后包含
         // );  */
 $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
@@ -52,7 +52,7 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
     
     var dp = $(this);    // 当前整个<dropdown>
     dp.html(                                           // 设置内部元素
-       `<div class="lw_dropitem" data-dsi="0">
+       `<div class="lw_dropitem">
             <input class="lw_dropitem_input" type="${editable?'text' : 'button'}" value="v0">
             <span style="margin-right:5px; float: right;">▽</span>
         </div>
@@ -63,22 +63,26 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
     opts.map((u,i)=>{
         var tr = $("<tr></tr>");
         for (k in u) {
-            tr.append(`<td title="${k}">${u[k]}</td>`);    // 鼠标悬浮显示该列Key值                 
+            tr.append(`<td title="${k}">${u[k]}</td>`);
         }
-        tr.data("lid", i);             // <tr data-lid=${自身行号}> ... </tr>
+        tr.data("lid", i);              // <tr data-lid=${自身行号}> ... </tr>
         dp.find("table").append(tr);                   // 填充droplist表格内容
     });
     var di = $(this).find(".lw_dropitem");      // 当前控件的<droptiem>
     var dl = $(this).find(".lw_droplist");      // 当前控件的<droplist>
+
+    di.data("d_col", col);      // col(num | func) 放入控件data
 
     if(!iid)    iid = 0;
     di.data("dsi", iid);                 // 设置初始选择行id号
 
     var s_val = getShowVal(dl.find("tr").eq(iid), iid);
     di.find("input").prop("value", s_val);  // 。。。input，text或button
+    
     dl.find("tr").eq(iid).addClass("s");    // 设定好初始高亮行
     dl.scrollTop(iid * g_lh - 100);         // 如果有滚动条，保证初始高亮行可见
-// ~ ~ ~ ~ ~ ~ ~ ~ - - - - - - - - ~ ~ ~ ~ ~ ~ ~ ~ - - - - - - - -
+
+    // ~ ~ ~ ~ ~ ~ ~ ~ - - - - - - - - ~ ~ ~ ~ ~ ~ ~ ~ - - - - - - - -
     function getShowVal(tr, s_id) {
         if(typeof(col)=="function") {
             return col(s_id);                       // 设置显示第id行在DI上的规则。。
@@ -102,7 +106,7 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
 
         var other_active_di = $(".lw_droplist:visible").prev().not(this);
         other_active_di.find("span").html('▽');
-        other_active_di.next().hide();  // console.log('hide ^^^');
+        other_active_di.next().hide();  // console.log('hide others visible ^^^');
 
         dl.toggle();
         toggleSj(di.find("span"));
@@ -117,7 +121,8 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
 
         $(document).click(click_blank);     // 准备点击空白处的事件。。。完成后取消绑定
     });
-    dl.find("tr").click(function(e) {                 // droplist的某一行被点击。。。
+    // dl.find("tr").click(function(e) {                 // droplist的某一行被点击。。。
+    dl.on("click", "tr", function(e) {    // 这种写法可以捕获未来添加的<tr>
         var dl = $(this).parents(".lw_droplist"); //---- 也可用全局di dl。。。但用class名批量set控件的时候不行
         var di = dl.prev();     // 不用.siblings()，<droplist>的prev()就是<dropitem>
         // console.log('选取...', dl.parent().index(), $(this).index());
@@ -129,7 +134,7 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
         di.find("input").prop("value", s_val);  // 显示。。。input
         di.find("input").select();              // 设置文本选中状态！
 
-        dl.hide();
+        dl.hide();  // console.log('hide @ tr.click-sel');
         di.find("span").html('▽');
 
         $(document).unbind("click", click_blank);       //取消bind的click事件回调函数
@@ -143,7 +148,7 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
         // if(!(keycode==38 || keycode==40 || keycode==13))     // 38：↑，40：↓，13：回车，27：ESC
         //     return;
         if(keycode == 27) {
-            dl.hide();  // console.log('hide27');
+            dl.hide();  // console.log('hide @ ESC');
             di.find("span").html('▽');
             return;
         }
@@ -154,7 +159,7 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
 
         if(keycode == 13) {
             if(!dl.is(":visible")) {
-                dl.show();  // console.log('show1');
+                dl.show();  // console.log('show @ enter');
                 di.find("span").html('△');
                 return;
             }
@@ -163,7 +168,7 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
             di.find("input").prop("value", s_val);  // 显示。。。input
             di.find("input").select();              // 设置文本选中状态！
             
-            dl.hide(); // console.log('hide1');
+            dl.hide(); // console.log('hide @ enter-sel');
             di.find("span").html('▽');
             
             if(typeof(callback)=="function") {
@@ -172,7 +177,7 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
             return;
         }
         if(!dl.is(":visible")) {
-            dl.show();  // console.log('show2');
+            dl.show();  // console.log('show @ keyup');
             di.find("span").html('△');
         }
 
@@ -191,7 +196,9 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
                 break;
             }
             if(trs.eq(sel_id).is(":visible")) {     // 小心 .eq(-1)取倒数第一个
+                // console.log('class=', trs.eq(sel_id).prop("class"));
                 trs.eq(sel_id).addClass("s");
+                // console.log('class=', trs.eq(sel_id).attr("class"));
                 break;
             }   
         }
@@ -259,3 +266,54 @@ $.fn.setDpWidth = function(w1, w2) {
 $.fn.setDpHeight = function(h1) {
     $(this).find(".lw_droplist").css("max-height", h1);
 };
+$.fn.setDpWidth = function(w1) {
+    $(this).find(".lw_droplist").css("width", w1);
+};
+
+function getShowVal_o(tr, s_id, col) {   // 外部函数，需提供col
+    if(typeof(col)=="function") {
+        return col(s_id);                       // 设置显示第id行在DI上的规则。。
+    } else {
+        if(!col)    col = 0;
+        return tr.children().eq(col).text();    // 取表格当前行第col列显示
+    }
+}
+$.fn.getSelId = function() {          // 获取当前选中行号
+    return $(this).find(".lw_dropitem").data("dsi");
+}
+$.fn.setSelId = function(sid) {       // 设置显示第sid行
+    var di = $(this).find(".lw_dropitem");      // 当前控件的<droptiem>
+    var dl = $(this).find(".lw_droplist");      // 当前控件的<droplist>
+    di.data("dsi", sid);
+
+    var col = di.data("d_col");     // 取出 col 
+    var s_val = getShowVal_o(dl.find("tr").eq(sid), sid, col);
+    di.find("input").prop("value", s_val);  // 。。。input，text或button
+
+    dl.find("tr").eq(sid).addClass("s");    // 设定好初始高亮行
+    dl.scrollTop(sid * g_lh - 100);         // 如果有滚动条，保证初始高亮行可见
+}
+
+$.fn.setData = function(dat, iid) {         // 更新下拉列表表格数据
+    var di = $(this).find(".lw_dropitem");      // 当前控件的<droptiem>
+    var dl = $(this).find(".lw_droplist");      // 当前控件的<droplist>
+    dl.find("table").empty();      // 先清空表格
+
+    dat.map((u,i)=>{
+        var tr = $("<tr></tr>");
+        for (k in u) {
+            tr.append(`<td title="${k}">${u[k]}</td>`);
+        }
+        tr.data("lid", i);              // <tr data-lid=${自身行号}> ... </tr>
+        dl.find("table").append(tr);       // 填充droplist表格内容
+    });
+    if(!iid)    iid = 0;
+    di.data("dsi", iid);                 // 设置初始选择行id号
+
+    var col = di.data("d_col");     // 取出 col 
+    var s_val = getShowVal_o(dl.find("tr").eq(iid), iid, col);
+    di.find("input").prop("value", s_val);  // 。。。input，text或button
+    
+    dl.find("tr").eq(iid).addClass("s");    // 设定好初始高亮行
+    dl.scrollTop(iid * g_lh - 100);         // 如果有滚动条，保证初始高亮行可见
+}
