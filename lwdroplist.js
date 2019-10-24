@@ -27,13 +27,14 @@ var g_lh = 24.6;      // 用于控制滚动条的行高
 /* 自定义：$("#dp").setDropdown(
             // opts.dat: [{k1:v1, k2:v2, ..}, ..]
             // callback：回调函数 on_sel(id){...}，参数为选中行id
-            // editable: true(input) | false(div)；缺省false
+            // editable: true(可编辑，可筛选) | false；缺省false
             // iid: 初始显示第几行，缺省0
-            // col: 显示每行第几列？或者是一个函数，缺省第0列
+            // col: 显示每行第几列？或者是一个函数；缺省第0列
             // cmp：如果是input，定义筛选时内容匹配方法，缺省为整行所有字符串拼接后包含
+            // guid: 定义区分所有lwdp控件的唯一ID（如果不用控件id区分）
         // );  */
-$.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
-    var opts, callback, editable, iid, col, cmp;
+$.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0, guid0) {
+    var opts, callback, editable, iid, col, cmp, guid;
     if(typeof(opts0.dat)=="object" && typeof(opts0.dat.length)=="number") {
         opts = opts0.dat;
         callback = opts0.callback;
@@ -41,6 +42,7 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
         iid = opts0.iid;
         col = opts0.col;
         cmp = opts0.cmp;
+        guid = opts0.guid;
     } else {
         opts = opts0;
     }
@@ -49,6 +51,7 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
     if(typeof(iid0)!="undefined")  iid = iid0;
     if(typeof(col0)!="undefined")  col = col0;
     if(typeof(cmp0)!="undefined")  cmp = cmp0;
+    if(guid0 !== undefined)        guid= guid0;
     
     var dp = $(this);    // 当前整个<dropdown>
     dp.html(                                           // 设置内部元素
@@ -63,7 +66,7 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
     opts.map((u,i)=>{
         var tr = $("<tr></tr>");
         for (k in u) {
-            tr.append(`<td title="${k}">${u[k]}</td>`);
+            tr.append(`<td title="${k}">${u[k]}</td>`);    // 鼠标悬浮显示该列Key值
         }
         tr.data("lid", i);              // <tr data-lid=${自身行号}> ... </tr>
         dp.find("table").append(tr);                   // 填充droplist表格内容
@@ -140,7 +143,10 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
         $(document).unbind("click", click_blank);       //取消bind的click事件回调函数
 
         if(typeof(callback)=="function") {
-            callback(s_id);                       // 调用外面设置的回调函数，处理业务。。
+            if(guid === undefined)
+                callback(s_id, dp);                       // 调用外面设置的回调函数，处理业务。。
+            else
+                callback(s_id, guid, dp);  // 其实统一3参数更好，为了外面定义函数简洁。。强迫症了。。
         }
     });
 
@@ -172,7 +178,10 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
             di.find("span").html('▽');
             
             if(typeof(callback)=="function") {
-                callback(sel_id);                       // 调用外面设置的回调函数，处理业务。。
+                if(guid === undefined)
+                    callback(s_id, dp);                       // 调用外面设置的回调函数，处理业务。。
+                else
+                    callback(s_id, guid, dp);
             }
             return;
         }
@@ -196,9 +205,7 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0) {
                 break;
             }
             if(trs.eq(sel_id).is(":visible")) {     // 小心 .eq(-1)取倒数第一个
-                // console.log('class=', trs.eq(sel_id).prop("class"));
                 trs.eq(sel_id).addClass("s");
-                // console.log('class=', trs.eq(sel_id).attr("class"));
                 break;
             }   
         }
