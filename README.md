@@ -23,7 +23,8 @@ dp1.setDropdown({       // 用json传递参数
     editable: true,         // 是否可编辑筛选？省略则为false
     iid: 8,                 // 初始选择dat中第几行？缺省为0
     col: func_col,          // 完成选取后如何显示某个option？col为数字时表示取列表第几列，缺省值0；也可以为自定义函数！
-    cmp: func_cmp           // 在editable状态下，键入文字如何筛选列表数据？为自定义函数，省略则为整行文本之间匹配。
+    cmp: func_cmp,          // 在editable状态下，键入文字如何筛选列表数据？为自定义函数，省略则为整行文本之间匹配。
+    guid: 2,                // guid: 定义区分所有lwdp控件的唯一ID（如果不用控件id区分）
 });
 dp1.setDpWidth("280px", "88%");    // 按需自己微调控件宽度、输入框宽度(比例)
 
@@ -35,8 +36,8 @@ var opt1 = [
 ];
 
 【回调函数示例】：
-var func_on_sel = function(sid) {   // 自定义选择改变时的回调函数
-    // alert('选中的行号是：' + sid);
+var func_on_sel = function(sid, guid, obj) {   // 自定义选择改变时的回调函数
+    // alert('选中的行号是：' + sid);   // guid为设置控件时传入值（如果有），obj为目标控件<div>
     $("#s1").html('选中：' + func_col(sid));
 }
 【自定义显示函数示例】：
