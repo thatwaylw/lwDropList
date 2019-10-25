@@ -100,6 +100,8 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0, guid
         var di = $(this);         //---- 也可用全局di dl。。。但用class名批量set控件的时候，要用各自di dl
         var dl = $(this).next();        // 不用.siblings()，<dropitem>的next()就是<droplist>
 
+        if(di.data("disabled") !== undefined)   return;
+
         if(e.originalEvent.clientX == 0) {         // 是按回车键进来的。。。阻止！！
             // if(dl.is(":visible"))   
                 return;
@@ -179,9 +181,9 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0, guid
             
             if(typeof(callback)=="function") {
                 if(guid === undefined)
-                    callback(s_id, dp);                       // 调用外面设置的回调函数，处理业务。。
+                    callback(sel_id, dp);                       // 调用外面设置的回调函数，处理业务。。
                 else
-                    callback(s_id, guid, dp);
+                    callback(sel_id, guid, dp);
             }
             return;
         }
@@ -232,6 +234,9 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0, guid
         // e.stopPropagation(); 没有滚动条时，上下键会让整个页面滚动。。。如何阻止？？
         var di = $(this).parents(".lw_dropitem");     //---- 也可用全局di dl。。。
         var dl = di.next();          // 但用class名批量set控件的时候，要用各自di dl
+
+        if(di.data("disabled") !== undefined)   return;
+
         // console.log('keycode:', e.which);
         if(e.which==38 || e.which==40 || e.which==13 || e.which==27)    // 38：↑，40：↓，13：回车，27：ESC
         {
@@ -293,7 +298,7 @@ $.fn.setSelId = function(sid) {       // 设置显示第sid行
     var dl = $(this).find(".lw_droplist");      // 当前控件的<droplist>
     di.data("dsi", sid);
 
-    var col = di.data("d_col");     // 取出 col 
+    var col = di.data("d_col");     // 取出 col，data()可以储存任意对象类型，包括函数！！
     var s_val = getShowVal_o(dl.find("tr").eq(sid), sid, col);
     di.find("input").prop("value", s_val);  // 。。。input，text或button
 
@@ -317,10 +322,25 @@ $.fn.setData = function(dat, iid) {         // 更新下拉列表表格数据
     if(!iid)    iid = 0;
     di.data("dsi", iid);                 // 设置初始选择行id号
 
-    var col = di.data("d_col");     // 取出 col 
+    var col = di.data("d_col");     // 取出 col，data()可以储存任意对象类型，包括函数！！
     var s_val = getShowVal_o(dl.find("tr").eq(iid), iid, col);
     di.find("input").prop("value", s_val);  // 。。。input，text或button
     
     dl.find("tr").eq(iid).addClass("s");    // 设定好初始高亮行
     dl.scrollTop(iid * g_lh - 100);         // 如果有滚动条，保证初始高亮行可见
+}
+
+$.fn.setEnable = function(flag) {
+    var di = $(this).find(".lw_dropitem");      // 当前控件的<droptiem>
+    if(!flag) {
+        di.data("disabled", true);
+        di.addClass("lw_di_disabled");
+    } else {
+        di.removeData("disabled");
+        di.removeClass("lw_di_disabled");
+    }
+}
+$.fn.getEnable = function(flag) {
+    var di = $(this).find(".lw_dropitem");      // 当前控件的<droptiem>
+    return (di.data("disabled") === undefined);
 }
