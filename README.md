@@ -1,5 +1,5 @@
 # lwDropList
-增强HTML自带<Select>功能：下拉支持多列富媒体显示，支持键入快速筛选。
+增强HTML自带&lg;Select&gt;功能：下拉支持多列富媒体显示，支持键入快速筛选。
 
 # 基本使用方法
 * HTML里插入一个div，推荐用id标识：
