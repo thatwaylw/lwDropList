@@ -1,6 +1,7 @@
 .lw_dropdown {
     position: relative;
     display: inline-block;
+    min-width: 200px;
 }
 .lw_dropitem {
     width: 100%;
@@ -14,8 +15,11 @@
     border: none;
     font-size: 16px;
     margin: 2px 0 2px 10px;  /* 上下 左右；；上右下左*/
-    width: 80%;
+    width: 165px;
     cursor: pointer;
+}
+.lw_dropitem_input[type="text"] {       /* 输入框特殊微调，和按钮有细微对不齐。。。*/
+    padding: 2px 0 2px 5px;
 }
 .lw_dropitem_input[type="text"]:focus {
     cursor: auto;

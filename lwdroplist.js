@@ -56,12 +56,12 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0, guid
     var dp = $(this);    // 当前整个<dropdown>
     dp.html(                                           // 设置内部元素
        `<div class="lw_dropitem">
-            <input class="lw_dropitem_input" type="${editable?'text' : 'button'}" value="v0">
+            <input class="lw_dropitem_input" type="${editable ? 'text' : 'button'}" value="v0">
             <span style="margin-right:5px; float: right;">▽</span>
         </div>
         <div class="lw_droplist"><table></table></div>`);
     
-    dp.addClass("lw_dropdown").css("min-width","200px");      // 设置本div类别属性，缺省200px宽，可外面自定义
+    dp.addClass("lw_dropdown");      // 设置本div类别属性，缺省200px宽，可外面自定义
 
     opts.map((u,i)=>{
         var tr = $("<tr></tr>");
@@ -275,10 +275,10 @@ $.fn.setDpWidth = function(w1, w2) {
     if(w2)
         $(this).find("input").css("width", w2);
 };
-$.fn.setDpHeight = function(h1) {
+$.fn.setDlHeight = function(h1) {
     $(this).find(".lw_droplist").css("max-height", h1);
 };
-$.fn.setDpWidth = function(w1) {
+$.fn.setDlWidth = function(w1) {
     $(this).find(".lw_droplist").css("width", w1);
 };
 
@@ -340,7 +340,7 @@ $.fn.setEnable = function(flag) {
         di.removeClass("lw_di_disabled");
     }
 }
-$.fn.getEnable = function(flag) {
+$.fn.getEnable = function() {
     var di = $(this).find(".lw_dropitem");      // 当前控件的<droptiem>
     return (di.data("disabled") === undefined);
 }
