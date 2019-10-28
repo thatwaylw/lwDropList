@@ -31,14 +31,30 @@
     <div class="bdr">
         <p>又一块内容</p>
         学生：<div id="drpdn2"></div>（缺省宽度200，可按需自定义缩短宽度）
-        <br>……
+<pre>
+    $("#drpdn2").setDropdown({dat:opt2, editable:true});
+    $("#drpdn2").setDpWidth("80px", "60px");  <i style="color:gray">// 设置下拉按钮，以及内部文字区宽度。。</i>
+    $("#drpdn2").setDlHeight("450px");  <i style="color:gray">// 设置下拉列表的最大高度（默认300），超出则滚动条</i>
+</pre>
     </div>
     <div class="mg pd bdr">
         <h3>使用方法：</h3>
-        <pre>
-【html】: &lt;div id="drpdn0"&gt;&lt;/div&gt;
-【js】: $("#drpdn0").setDropdown(opt0, 0, false, 0, 1);
+        <a href="https://github.com/thatwaylw/lwDropList">https://github.com/thatwaylw/lwDropList</a>
+        <hr>
+        <div>
+            控件3：<div id="drpdn3"></div> 演示了下拉列表可以更宽！
+<pre>
+    $("#drpdn3").setDpWidth(100);   <i style="color:gray">// 设置下拉按钮宽度。。</i>
+    $("#drpdn3").setDlWidth(300);   <i style="color:gray">// 单独设置下拉列表宽度，比下拉按钮更宽。。</i>
+</pre>
 
+            控件4：<div id="drpdn4"></div> 演示了一个被禁止的下拉控件…
+<pre>
+    $("#drpdn4").setEnable(false);
+</pre>
+        </div>
+        <hr>
+<pre>
 【html】: &lt;div id="drpdn1"&gt;&lt;/div&gt;
 【js】: 
 var dp1 = $("#drpdn1");
@@ -57,7 +73,12 @@ var opt1 = [
     {id:2, name:'班级2', '人数': 10, addr:'地址2'}, 
     ...
 ];
-        </pre>
+【回调函数示例】：
+var func_on_sel = function(sid, obj) {   <i style="color:gray">// 自定义选择改变时的回调函数</i>
+<i style="color:gray">// 如果setDropdown时定义了{guid:}，则回调函数有三个参数(sid, guid, obj)；obj为当前控件jquery对象</i>
+    $("#s1").html('选中：' + func_col(sid));
+}
+</pre>
     </div>
 </div>
 
@@ -107,7 +128,8 @@ var opt1 = [
         return (lin.indexOf(txt));
     }
     var func_on_sel = function(sid) {   // 自定义选择改变时的回调函数
-        // alert('选中的内容是：' + func_col(sid));
+        // 如果setDropdown时定义了{guid:}，则回调函数有三个参数(sid, guid, obj)
+        // 否则，回调函数只两个参数(sid, obj)：obj为当前控件jquery对象
         $("#s1").html('选中：' + func_col(sid));
     }
 
@@ -119,8 +141,15 @@ var opt1 = [
     dp1.setDpWidth("280px", "88%");       // 自己微调输入框宽度比例，免得把▽挤到下一行。。
 
     $("#drpdn2").setDropdown({dat:opt2, editable:true});
-    $("#drpdn2").setDpWidth("80px", "80px");
-    $("#drpdn2").setDlHeight("300px");
+    $("#drpdn2").setDpWidth("80px", "60px");  // 设置下拉按钮，以及内部文字区宽度。。
+    $("#drpdn2").setDlHeight("450px");  // 设置下拉列表的最大高度（默认300），超出则滚动条
+
+    $("#drpdn3").setDropdown({dat:opt1, col:1});
+    $("#drpdn3").setDpWidth(100);       // 第二个参数可省略，默认内置input宽度为父节点宽度-20
+    $("#drpdn3").setDlWidth(300);       // 单独设置下拉列表宽度，可以比下拉按钮更宽。。
+    
+    $("#drpdn4").setDropdown({dat:opt1, col:1});
+    $("#drpdn4").setEnable(false);
 
     $("div.drd").setDropdown(opt0);         // 设置三个同class控件，内容相同，但是行为各自
 

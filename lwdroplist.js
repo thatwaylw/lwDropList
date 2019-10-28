@@ -230,7 +230,7 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0, guid
     }
 
     // $(".lw_dropitem input").change(function(e) {       // 按键不触发。。要按回车或者失去焦点（blur）才促发。。。
-    di.find("input").keyup(function(e) {       // 按键不触发。。要按回车或者失去焦点（blur）才促发。。。
+    di.find("input").keydown(function(e) {       // 按键不触发。。要按回车或者失去焦点（blur）才促发。。。
         // e.stopPropagation(); 没有滚动条时，上下键会让整个页面滚动。。。如何阻止？？
         var di = $(this).parents(".lw_dropitem");     //---- 也可用全局di dl。。。
         var dl = di.next();          // 但用class名批量set控件的时候，要用各自di dl
@@ -241,7 +241,7 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0, guid
         if(e.which==38 || e.which==40 || e.which==13 || e.which==27)    // 38：↑，40：↓，13：回车，27：ESC
         {
             handle_key_sel(di, dl, e.which);
-            return;
+            return false;           // 阻止默认行为，禁止整个页面上下滚动。。。// 屏蔽按钮，必须用keydown！keypress/keyup不行。。。
         }
         
         if(!editable)   return;
@@ -272,8 +272,9 @@ $.fn.setDropdown = function (opts0, callback0, editable0, iid0, col0, cmp0, guid
 
 $.fn.setDpWidth = function(w1, w2) {
     $(this).css("min-width", w1);
-    if(w2)
-        $(this).find("input").css("width", w2);
+    // if(w2)
+    if(!w2) w2 = parseInt(w1)-20;
+    $(this).find("input").css("width", w2);
 };
 $.fn.setDlHeight = function(h1) {
     $(this).find(".lw_droplist").css("max-height", h1);
